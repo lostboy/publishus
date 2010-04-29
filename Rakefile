@@ -5,12 +5,13 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "publishus"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{An experimental publishing structure on top of vestal versions}
+    gem.description = %Q{Publishus allows active record models and associations to be published and exist both in a 'current' and 'live' state}
     gem.email = "paul.crabtree@gmail.com"
     gem.homepage = "http://github.com/lostboy/publishus"
     gem.authors = ["lostboy"]
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    gem.add_dependency "vestal_versions", "1.0.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
