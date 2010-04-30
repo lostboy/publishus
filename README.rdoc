@@ -1,16 +1,107 @@
 = publishus
 
-Description goes here.
+== Introduction
 
-== Note on Patches/Pull Requests
+At this stage this is purely an experimental piece of work to help me understand more of everything. It came about because of our need for a generic publishing framework to support the following needs:
+
+* Allow for editing of generic content whilst retaining all the revision history
+* Allow for publishing individual content items when theyre ready to go live
+* Allow publishing of all unpublished content at once
+
+== Implementation
+
+We looked at some of the versioning frameworks, all of them seemed capable but we saw none that really addressed publishing as such. The one that stood out was <tt>vestal_versions</tt>[http://github.com/laserlemon/vestal_versions] so we used that as our starting point. This is an extremely thin layer on top of the excellent <tt>vestal_versions</tt>[http://github.com/laserlemon/vestal_versions]. Vestal versions handles all of the revisioning off to another table and some really nice features but we needed a way to track publishing itself hence some additional attributes on our models and some extra methods. The basic idea is that all publishable items gain a <tt>named_scope</tt> called <tt>published</tt> which will filter down the results to only include items that are currently considered "live". Each instance gains a <tt>live</tt> method that will return the current live version of that object. For now when using the named_scope you've got to call a proxy extension called <tt></tt> live. The named_scope returns items that have a published version and the live method actually reverts the items to those versions.
+
+== Installation
+
+Prerequisites:
+
+  publishus requires vestal_versions by laserlemon
+  Follow instructions on installing <tt>vestal_versions</tt>[http://github.com/laserlemon/vestal_versions] first
+
+Install the gem:
+
+  gem install publishus
+
+In <tt>environment.rb</tt>:
+
+  Rails::Initializer.run do |config|
+    ...
+    config.gem 'publishus'
+    ...
+  end
+
+At your application root, run:
+
+  $ sudo rake gems:install
+
+Generate and run the vestal versioning migration:
+
+  $ script/generate vestal_versions
+  $ rake db:migrate
+
+== Example
+
+To version and activate publishing add this to your models:
+
+  class Post < ActiveRecord::Base
+    publishable
+	has_many :comments
+  end
+
+  class Comment < ActiveRecord::Base
+	publishable
+	belongs_to :page
+  end
+
+And add some fields to your tables in a migration (hopefully we'll automate this stuff later):
+
+  add_column :posts, :published_at, :datetime
+  add_column :posts, :deleted_at, :datetime
+  add_column :comments, :published_at, :datetime
+  add_column :comments, :deleted_at, :datetime
+
+Using it:
+
+  >> page = Page.create(:name => "Page 1")
+  => #<Page id: 1, name: "Page 1">
+  >> page.version	
+  => 1 (this bit is vestal versions magic)
+  >> page.publish!
+  => true
+  >> page.update_attribute(:name, "Page 2")
+  => true
+  >> page
+  => #<Page id: 1, name: "Page 2">
+  >> page.live
+  => #<Page id: 1, name: "Page 1">
+  >> Page.published.live
+  => [#<Page id: 1, name: "Page 1">]
+
+And for associations
+
+  >> page.comments.create(:body => "Great page")
+  => #<Comment id: 1, body: "Great page">
+  >> page.comments.published
+  => []
+  >> page.comments.first.publish!
+  => true
+  >> page.comments.published.live
+  => [#<Comment id: 1, body: "Great page">]
+  >> page.comments.first.update_attribute(:body, "Just an ok page")
+  => true
+  >> page.comments.create(:body => "Another comment")
+  => #<Comment id: 2, body: "Another comment">
+  >> page.comments
+  => [#<Comment id: 1, body: "Just an ok page">, #<Comment id: 2, body: "Another comment">]
+  >> page.comments.published.live
+  => [#<Comment id: 1, body: "Great page">]
+
+
+== Notes
  
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+* I really would't use this, its not tested and its not finished
+* If you're interested in helping out or know of something that already does this then let me know
 
 == Copyright
 
