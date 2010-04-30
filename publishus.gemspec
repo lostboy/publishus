@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{publishus}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["lostboy"]
-  s.date = %q{2010-04-29}
+  s.date = %q{2010-04-30}
   s.description = %q{Publishus allows active record models and associations to be published and exist both in a 'current' and 'live' state}
   s.email = %q{paul.crabtree@gmail.com}
   s.extra_rdoc_files = [
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "lib/publishus.rb",
+     "publishus.gemspec",
      "test/helper.rb",
      "test/test_publishus.rb"
   ]
