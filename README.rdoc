@@ -35,11 +35,6 @@ At your application root, run:
 
   $ sudo rake gems:install
 
-Generate and run the vestal versioning migration:
-
-  $ script/generate vestal_versions
-  $ rake db:migrate
-
 == Example
 
 To version and activate publishing add this to your models:
