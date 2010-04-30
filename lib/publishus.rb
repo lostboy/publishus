@@ -45,7 +45,7 @@ module Publishus
     end
 
     def destroy(real=false)
-      self.update_attribute(:deleted_at, Time.now) unless real then super.destroy
+      self.update_attribute(:deleted_at, Time.now)
     end
     
     def publish!(time=nil)
