@@ -16,8 +16,8 @@ We looked at some of the versioning frameworks, all of them seemed capable but w
 
 Prerequisites:
 
-  publishus requires vestal_versions by laserlemon
-  Follow instructions on installing <tt>vestal_versions</tt>[http://github.com/laserlemon/vestal_versions] first
+publishus requires vestal_versions by laserlemon
+Follow instructions on installing <tt>vestal_versions</tt>[http://github.com/laserlemon/vestal_versions] first
 
 Install the gem:
 
@@ -46,12 +46,12 @@ To version and activate publishing add this to your models:
 
   class Post < ActiveRecord::Base
     publishable
-	has_many :comments
+    has_many :comments
   end
 
   class Comment < ActiveRecord::Base
-	publishable
-	belongs_to :page
+    publishable
+    belongs_to :page
   end
 
 And add some fields to your tables in a migration (hopefully we'll automate this stuff later):
