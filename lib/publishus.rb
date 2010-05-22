@@ -17,7 +17,6 @@ module Publishus
   module ClassMethods
          
     def publishable    
-      
       versioned
       named_scope :published, :conditions => "#{name.tableize}.published_at is not null and (#{name.tableize}.deleted_at < #{name.tableize}.published_at or #{name.tableize}.deleted_at is null)" do
         def live
@@ -26,7 +25,7 @@ module Publishus
           end
         end
       end
-      
+      before_destroy :choose_fait
       include InstanceMethods
     end
     
@@ -44,10 +43,13 @@ module Publishus
       end
     end
 
-    def destroy(real=false)
-      self.update_attribute(:deleted_at, Time.now)
+    attr_accessor :proper_destroy
+
+    def real_destroy
+      @proper_destroy = true
+      destroy
     end
-    
+
     def publish!(time=nil)
       self.update_attribute(:published_at, time||Time.now)
     end
@@ -60,6 +62,15 @@ module Publishus
     def published?
       !self.published_at.nil?
     end   
+    
+    private
+    
+    def choose_fait
+      unless @proper_destroy
+        self.update_attribute(:deleted_at, Time.now)
+        false
+      end
+    end
   end
   
 end
